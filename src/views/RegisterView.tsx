@@ -2,7 +2,9 @@ import AuthNavigation from "../components/AuthNavigation"
 import { useForm } from "react-hook-form"
 import type { RegisterForm } from "../types";
 import ErrorMessage from "../components/ErrorMessage";
-import axios, { isAxiosError } from "axios";
+import { isAxiosError } from "axios";
+import api from "../config/axios"; //nuestro cliente axios
+import {toast} from 'sonner';
 
 const RegisterView = () => {
 
@@ -16,20 +18,23 @@ const RegisterView = () => {
     }
 
     // definir los hooks
-    const { register, watch, handleSubmit, formState: { errors } } = useForm<RegisterForm>({ defaultValues: initialValues });
+    const { register, watch, reset ,handleSubmit, formState: { errors } } = useForm<RegisterForm>({ defaultValues: initialValues });
 
-    const password = watch('password'); //forma para estar viendo la variable
+    const password = watch('password'); //forma para ver la variable en cambios con el input
 
     // definiendo nuestras funciones handle
     const handleRegister = async (formdata: RegisterForm) => {
         // conectar con nuestro backend
         try {
             // los datos de una api siempre van en un data
-            const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, formdata)
-            console.log(data);
+            const { data } = await api.post(`/auth/register`, formdata)
+            // agregando toast.
+            toast.success(data);
+            // reseteamos el formulario una vez mandado datos al backend
+            reset();
         } catch (error) {
             if(isAxiosError(error) && error.response){
-                console.log(error.response.data.msg)
+                toast.error(error.response.data.msg)
             }
         }
     }
