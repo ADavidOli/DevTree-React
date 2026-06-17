@@ -2,12 +2,12 @@ import AuthNavigation from "../components/AuthNavigation"
 import { useForm } from "react-hook-form"
 import type { RegisterForm } from "../types";
 import ErrorMessage from "../components/ErrorMessage";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 const RegisterView = () => {
 
     // definir valores iniciales
-    const initialValues : RegisterForm = {
+    const initialValues: RegisterForm = {
         name: '',
         email: '',
         handle: '',
@@ -21,14 +21,16 @@ const RegisterView = () => {
     const password = watch('password'); //forma para estar viendo la variable
 
     // definiendo nuestras funciones handle
-    const handleRegister = async(formdata: RegisterForm) => {
+    const handleRegister = async (formdata: RegisterForm) => {
         // conectar con nuestro backend
         try {
             // los datos de una api siempre van en un data
-            const {data} = await axios.post('http://localhost:4000/auth/register',formdata)
+            const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, formdata)
             console.log(data);
         } catch (error) {
-            console.log(error);
+            if(isAxiosError(error) && error.response){
+                console.log(error.response.data.msg)
+            }
         }
     }
 
@@ -115,7 +117,7 @@ const RegisterView = () => {
                         className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
                         {...register('password_confirmation', {
                             required: "la confirmacion es obligatoria",
-                            validate: (value)=> value === password || 'los passwords no son iguales'
+                            validate: (value) => value === password || 'los passwords no son iguales'
 
                         })}
                     />
