@@ -8,19 +8,20 @@ import api from "../config/axios";
 
 function LoginView() {
     // definiendo los types
-    const initialValues : LoginForm = {
+    const initialValues: LoginForm = {
         email: '',
         password: ''
     }
     // obteniendo los hooks
     const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues });
     // definiendo funciones
-    const handleLogin = async(formdata:LoginForm)=>{
+    const handleLogin = async (formdata: LoginForm) => {
         try {
-            const {data} = await api.post('/auth/login', formdata)
-            toast(data);
+            const { data } = await api.post('/auth/login', formdata)
+            localStorage.setItem('Auth_toke', data);
+
         } catch (error) {
-            if(isAxiosError(error) && error.response){
+            if (isAxiosError(error) && error.response) {
                 toast.error(error.response.data.msg);
             }
         }
