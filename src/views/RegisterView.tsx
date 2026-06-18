@@ -29,7 +29,8 @@ const RegisterView = () => {
             // los datos de una api siempre van en un data
             const { data } = await api.post(`/auth/register`, formdata)
             // agregando toast.
-            toast.success(data);
+            // console.log(data);
+            toast.success(data.msg);
             // reseteamos el formulario una vez mandado datos al backend
             reset();
         } catch (error) {
