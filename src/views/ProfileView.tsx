@@ -1,14 +1,18 @@
 import { useForm } from "react-hook-form"
 import ErrorMessage from "../components/ErrorMessage";
-import { useQueryClient } from "@tanstack/react-query"; 
+import { useQueryClient, useMutation } from "@tanstack/react-query"; 
 import type { ProfileForm, User } from "../types";
+import { updateUser } from "../api/DevTreeAPI";
+import { toast } from "sonner";
 
 
 export default function ProfileView() {
 
+    // importar hook de queryClient
     const queryClient = useQueryClient();
-    const data : User = queryClient.getQueryData(['user'])!;
 
+    const data : User = queryClient.getQueryData(['user'])!;
+    // funcion para el query
     const { register, handleSubmit, formState: { errors } } = useForm<ProfileForm> ({
         defaultValues: {
             handle: data.handle,
@@ -16,8 +20,20 @@ export default function ProfileView() {
         }
     });
 
+    // funcion para mutation.
+    const updateProfileMutation = useMutation({
+        mutationFn: updateUser,
+        onError: (error)=>{
+            toast.error(error.message);
+        },
+        onSuccess: (data)=>{
+            toast.success(data);
+            queryClient.invalidateQueries({queryKey:['user']}) //identifica, elimina los datos cacheados y lo actualiza
+        }
+    })
+
     const handleProfileUSerForm = (formadata: ProfileForm) => {
-        console.log(formadata)
+        updateProfileMutation.mutate(formadata);
     }
 
 

@@ -1,6 +1,6 @@
 import { isAxiosError } from "axios";
 import api from "../config/axios";
-import type { User } from "../types";
+import type { ProfileForm, User } from "../types";
 // aqui vamos a hacer la funcion para comunicarnos con el servidor
 
 export async function getUser() {
@@ -11,7 +11,20 @@ export async function getUser() {
 
     } catch (error) {
         if(isAxiosError(error) && error.response) {
-            throw new Error(error.response.data.error);
+            throw new Error(error.response.data.msg);
+        }
+    }
+}
+
+export async function updateUser(formData: ProfileForm) {
+    try {
+        // el interceptor siempre mandara el dato en la consulta de la api
+        const {data} = await api.patch<string>('/user',formData);
+        return data;
+
+    } catch (error) {
+        if(isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.msg);
         }
     }
 }
