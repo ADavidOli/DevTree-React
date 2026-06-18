@@ -3,13 +3,9 @@ import api from "../config/axios";
 // aqui vamos a hacer la funcion para comunicarnos con el servidor
 
 export async function getUser() {
-    const token = localStorage.getItem('Auth_toke')
     try {
-        const {data} = await api.get('/user', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        // el interceptor siempre mandara el dato en la consulta de la api
+        const {data} = await api.get('/user');
         return data;
 
     } catch (error) {
