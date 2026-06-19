@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form"
 import ErrorMessage from "../components/ErrorMessage";
-import { useQueryClient, useMutation } from "@tanstack/react-query"; 
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import type { ProfileForm, User } from "../types";
-import { updateUser } from "../api/DevTreeAPI";
+import { updateUser, uploadImage } from "../api/DevTreeAPI";
 import { toast } from "sonner";
 
 
@@ -11,9 +11,9 @@ export default function ProfileView() {
     // importar hook de queryClient
     const queryClient = useQueryClient();
 
-    const data : User = queryClient.getQueryData(['user'])!;
+    const data: User = queryClient.getQueryData(['user'])!;
     // funcion para el query
-    const { register, handleSubmit, formState: { errors } } = useForm<ProfileForm> ({
+    const { register, handleSubmit, formState: { errors } } = useForm<ProfileForm>({
         defaultValues: {
             handle: data.handle,
             description: data.description
@@ -23,14 +23,39 @@ export default function ProfileView() {
     // funcion para mutation.
     const updateProfileMutation = useMutation({
         mutationFn: updateUser,
+        onError: (error) => {
+            toast.error(error.message);
+        },
+        onSuccess: (data) => {
+            toast.success(data);
+            queryClient.invalidateQueries({ queryKey: ['user'] }) //identifica, elimina los datos cacheados y lo actualiza
+        }
+    })
+
+    // mutation para obtener la imagen
+    const uploadImageMutation = useMutation({
+        mutationFn: uploadImage,
         onError: (error)=>{
             toast.error(error.message);
         },
         onSuccess: (data)=>{
-            toast.success(data);
-            queryClient.invalidateQueries({queryKey:['user']}) //identifica, elimina los datos cacheados y lo actualiza
+            queryClient.setQueryData(['user'],(prevData: User)=>{
+                return {
+                    ...prevData,
+                    image: data.image
+                }
+            })  //modifica los objetos que estan en memoria
+
         }
     })
+
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            uploadImageMutation.mutate(e.target.files[0])
+
+        }
+    }
 
     const handleProfileUSerForm = (formadata: ProfileForm) => {
         updateProfileMutation.mutate(formadata);
@@ -82,7 +107,7 @@ export default function ProfileView() {
                     name="handle"
                     className="border-none bg-slate-100 rounded-lg p-2"
                     accept="image/*"
-                    onChange={() => { }}
+                    onChange={handleChange}
                 />
             </div>
 
