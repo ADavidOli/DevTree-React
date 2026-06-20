@@ -16,7 +16,7 @@ export async function getUser() {
     }
 }
 
-export async function updateUser(formData: ProfileForm) {
+export async function updateUser(formData: User) {
     try {
         // el interceptor siempre mandara el dato en la consulta de la api
         const { data } = await api.patch<string>('/user', formData);
