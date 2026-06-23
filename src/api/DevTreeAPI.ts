@@ -30,12 +30,25 @@ export async function updateUser(formData: User) {
 }
 
 
-export async function uploadImage(file:File) {
+export async function uploadImage(file: File) {
     const formData = new FormData();
-    formData.append('file',file);
+    formData.append('file', file);
 
     try {
-        const {data} = await api.post('/user/image', formData);
+        const { data } = await api.post('/user/image', formData);
+        return data;
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.msg);
+        }
+    }
+}
+
+
+export async function getUserByHandle(handle: string) {
+    try {
+        // conexion a nuestro api.
+        const {data} = await api<string>(`/${handle}`);
         return data;
     } catch (error) {
         if (isAxiosError(error) && error.response) {
