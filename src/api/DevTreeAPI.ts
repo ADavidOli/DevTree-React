@@ -20,7 +20,7 @@ export async function updateUser(formData: User) {
     try {
         // el interceptor siempre mandara el dato en la consulta de la api
         const { data } = await api.patch<string>('/user', formData);
-        return data;
+        return data
 
     } catch (error) {
         if (isAxiosError(error) && error.response) {
@@ -54,7 +54,6 @@ export async function getUserByHandle(handle: string) {
         if (isAxiosError(error) && error.response) {
             throw new Error(error.response.data.msg);
         }
-        throw error;
     }
 }
 
