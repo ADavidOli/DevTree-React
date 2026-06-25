@@ -10,7 +10,7 @@ export default function AppLayout() {
         // configuraciones
         queryFn: getUser,
         queryKey:['user'],
-        retry: 1,
+        retry: 2,
         refetchOnWindowFocus: false
     })
     if(isLoading)return 'cargando...';

@@ -1,6 +1,6 @@
 import { isAxiosError } from "axios";
 import api from "../config/axios";
-import type { ProfileForm, User } from "../types";
+import type { ProfileForm, User, UserHandle } from "../types";
 // aqui vamos a hacer la funcion para comunicarnos con el servidor
 
 export async function getUser() {
@@ -48,7 +48,19 @@ export async function uploadImage(file: File) {
 export async function getUserByHandle(handle: string) {
     try {
         // conexion a nuestro api.
-        const {data} = await api<string>(`/${handle}`);
+        const {data} = await api<UserHandle>(`/${handle}`);
+        return data;
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.msg);
+        }
+    }
+}
+
+
+export async function searchByHandle(handle: string) {
+    try {
+        const {data} = await api.post<string>('/search',{handle});
         return data;
     } catch (error) {
         if (isAxiosError(error) && error.response) {

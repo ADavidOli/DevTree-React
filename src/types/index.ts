@@ -22,6 +22,10 @@ export type LoginForm = Pick<User, 'email'> & {
 export type ProfileForm = Pick<User, 'handle' | 'description'>
 
 
+export type UserHandle = Pick<User, 'description' | 'handle' | 'image', 'links', | 'name'>
+
+
+
 
 // type para links
 

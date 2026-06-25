@@ -1,21 +1,28 @@
-import AuthNavigation from "../components/AuthNavigation"
+import AuthNavigation from "../components/nav/AuthNavigation"
 import { useForm } from "react-hook-form"
 import type { RegisterForm } from "../types";
 import ErrorMessage from "../components/ErrorMessage";
 import { isAxiosError } from "axios";
 import api from "../config/axios"; //nuestro cliente axios
 import {toast} from 'sonner';
+import { useLocation, useNavigate } from "react-router-dom";
+
 
 const RegisterView = () => {
-
+    
     // definir valores iniciales
+    const location = useLocation();
+    
     const initialValues: RegisterForm = {
         name: '',
         email: '',
-        handle: '',
+        handle: location?.state?.handle || '',
         password: '',
         password_confirmation: ''
     }
+    
+    const navigate = useNavigate();
+    
 
     // definir los hooks
     const { register, watch, reset ,handleSubmit, formState: { errors } } = useForm<RegisterForm>({ defaultValues: initialValues });
@@ -33,6 +40,7 @@ const RegisterView = () => {
             toast.success(data.msg);
             // reseteamos el formulario una vez mandado datos al backend
             reset();
+            navigate('/auth/login');
         } catch (error) {
             if(isAxiosError(error) && error.response){
                 toast.error(error.response.data.msg)

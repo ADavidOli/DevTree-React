@@ -1,6 +1,7 @@
-import { useParams } from "react-router-dom"
+import { Navigate, useParams } from "react-router-dom"
 import { getUserByHandle } from "../api/DevTreeAPI"
 import { useQuery } from "@tanstack/react-query"
+import HandleData from "../components/HandleData"
 
 
 
@@ -16,13 +17,19 @@ const HandleView = () => {
         queryKey: ['handle', handle],
         retry: 1
     })
-
-    console.log(isLoading);
-    console.log(error);
-    console.log(data);
+    if(isLoading){
+      return <p className="text-center text-white"> cargando...</p>
+    }
+    if(error){
+      return <Navigate to={'/404'}/>
+    }
+    if(data){
+      return <HandleData data={data}></HandleData>
+    }
+ 
 
   return (
-    <div>HandleView</div>
+    <div>{data?.email}</div>
   )
 }
 

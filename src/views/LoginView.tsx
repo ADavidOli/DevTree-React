@@ -1,10 +1,11 @@
 import { useForm } from "react-hook-form"
-import AuthNavigation from "../components/AuthNavigation"
+import AuthNavigation from "../components/nav/AuthNavigation"
 import ErrorMessage from "../components/ErrorMessage";
 import type { LoginForm } from "../types";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
 import api from "../config/axios";
+import { useNavigate } from "react-router-dom";
 
 function LoginView() {
     // definiendo los types
@@ -12,13 +13,19 @@ function LoginView() {
         email: '',
         password: ''
     }
+
+
     // obteniendo los hooks
+    
+    const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues });
     // definiendo funciones
     const handleLogin = async (formdata: LoginForm) => {
         try {
             const { data } = await api.post('/auth/login', formdata)
             localStorage.setItem('Auth_toke', data);
+            navigate('/admin');
+            
 
         } catch (error) {
             if (isAxiosError(error) && error.response) {
