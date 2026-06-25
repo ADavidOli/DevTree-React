@@ -24,7 +24,7 @@ export async function updateUser(formData: User) {
 
     } catch (error) {
         if (isAxiosError(error) && error.response) {
-            throw new Error(error.response.data.msg);
+            throw new Error('debes de completar tu perfil primero');
         }
     }
 }

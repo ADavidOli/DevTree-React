@@ -29,6 +29,7 @@ function LoginView() {
 
         } catch (error) {
             if (isAxiosError(error) && error.response) {
+                console.log(error.response.data.msg);
                 toast.error(error.response.data.msg);
             }
         }
