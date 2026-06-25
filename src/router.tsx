@@ -22,7 +22,7 @@ export default function Router() {
                         <Route index={true} element={<LinkTreeView />} />
                         <Route path="profile" element={<ProfileView />} />
                     </Route>
-                    <Route path="/:handle" element={< AuthLayout />}>
+                    <Route path="/:handle" element={<AuthLayout />}>
                         <Route index={true} element={<HandleView/>}/>
                     </Route>
                     
