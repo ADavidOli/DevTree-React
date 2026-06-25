@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { social } from '../data/social'
 import DevTreeInput from '../components/DevTreeInput'
 import { isValidUrl } from '../utils/idex'
 import { toast } from 'sonner'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { updateUser } from '../api/DevTreeAPI'
 import type { User, socialNetwork } from '../types'
 
@@ -13,7 +13,7 @@ const LinkTreeView = () => {
 
 
   const queryClient = useQueryClient()
-  const user: User = queryClient.getQueryData(['user']);
+  const user = queryClient.getQueryData<User>(['user'])!;
 
   // agregando mutation.
   const { mutate } = useMutation({
@@ -57,7 +57,7 @@ const LinkTreeView = () => {
       return link
     })
     setDevTreeLinks(updatedLink);
-    let updatedItems: socialNetwork = [];
+    let updatedItems: Array<socialNetwork> = [];
     const SelectSocialNetWork = updatedLink.find(link => link.name === socialNetwork);
 
     if (SelectSocialNetWork?.enabled) {

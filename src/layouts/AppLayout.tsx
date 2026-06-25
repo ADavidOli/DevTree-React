@@ -6,7 +6,7 @@ import DevTree from "../components/DevTree";
 export default function AppLayout() {
 
     // trabajando con tanStack
-    const {data, isLoading, error, isError} = useQuery({
+    const {data, isLoading, isError} = useQuery({
         // configuraciones
         queryFn: getUser,
         queryKey:['user'],

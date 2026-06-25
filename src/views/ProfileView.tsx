@@ -11,7 +11,7 @@ export default function ProfileView() {
     // importar hook de queryClient
     const queryClient = useQueryClient();
 
-    const data: User = queryClient.getQueryData(['user'])!;
+    const data: User = queryClient.getQueryData<User>(['user'])!;
     // funcion para el query
     const { register, handleSubmit, formState: { errors } } = useForm<ProfileForm>({
         defaultValues: {
@@ -58,7 +58,7 @@ export default function ProfileView() {
     }
 
     const handleProfileUSerForm = (formadata: ProfileForm) => {
-        const user : User = queryClient.getQueryData(['user']);
+        const user : User = queryClient.getQueryData<User>(['user'])!;
         user.description = formadata.description
         user.handle = formadata.handle
         updateProfileMutation.mutate(user);
