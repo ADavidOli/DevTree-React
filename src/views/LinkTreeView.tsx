@@ -38,41 +38,91 @@ const LinkTreeView = () => {
   }, [])
 
 
+  // const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const updatedLinks = devTreeLinks.map(link => link.name === e.target.name ? { ...link, url: e.target.value } : link)
+  //   setDevTreeLinks(updatedLinks)
+  // }
+
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const updateLinks = devTreeLinks.map(link => link.name === e.target.name ? { ...link, url: e.target.value } : link)
+    const { name, value } = e.target;
+
+    const updateLinks = devTreeLinks.map(link => {
+      if (link.name === name) {
+        return {
+          ...link,
+          url: value,
+          enabled: isValidUrl(value)
+        };
+      }
+      return link;
+    });
+
     setDevTreeLinks(updateLinks);
-  }
+
+    const currentLinks: socialNetwork[] = JSON.parse(user.links);
+
+    const updatedItems = updateLinks
+      .filter(link => isValidUrl(link.url)) 
+      .map(link => {
+        const existing = currentLinks.find(l => l.name === link.name);
+
+        return {
+          ...link,
+          id: existing?.id ?? 0,
+          enabled: true
+        };
+      });
+
+    queryClient.setQueryData(['user'], (prevData: User) => {
+      return {
+        ...prevData,
+        links: JSON.stringify(updatedItems)
+      };
+    });
+  };
 
   const links: socialNetwork[] = JSON.parse(user.links);
 
   const handleEnabledLink = (socialNetwork: string) => {
     const updatedLink = devTreeLinks.map(link => {
       if (link.name === socialNetwork) {
-        if (isValidUrl(link.url)) {
-          return { ...link, enabled: !link.enabled }
-        } else {
-          toast.error('url no valida')
+        if (!isValidUrl(link.url)) {
+          toast.error('URL no válida');
+          return {
+            ...link,
+            enabled: false
+          };
         }
+
+        return {
+          ...link,
+          enabled: !link.enabled
+        };
       }
-      return link
-    })
+
+      return link;
+    });
+
     setDevTreeLinks(updatedLink);
     let updatedItems: Array<socialNetwork> = [];
+
     const SelectSocialNetWork = updatedLink.find(link => link.name === socialNetwork);
 
     if (SelectSocialNetWork?.enabled) {
-      const id =links.filter(link=> link.id>0).length + 1;
+      // saber que select fue seleccionado
+      console.log(SelectSocialNetWork);
+      const id = links.filter(link => link.id > 0).length + 1;
 
       // en caso de registros duplicados
       if (links.some(link => link.name === socialNetwork)) {
-        updatedItems = links.map(link=>{
-          if(link.name === socialNetwork){
-            return{
+        updatedItems = links.map(link => {
+          if (link.name === socialNetwork) {
+            return {
               ...link,
               enabled: true,
               id: id
             }
-          }else{
+          } else {
             return link;
           }
         })
